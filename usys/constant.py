@@ -1,5 +1,4 @@
-from .dim import DimensionalNumber
-from .unit_system import DIMENSION
+from usys.dim import DimensionalNumber, DIMENSION
 
 m = DimensionalNumber(1.0, DIMENSION['LENGTH'])
 kg = DimensionalNumber(1.0, DIMENSION['MASS'])

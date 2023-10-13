@@ -1,6 +1,28 @@
 import numpy as np
-from .unit_system import *
-from .utils import hot_array, differ_by_null
+from usys.utils import hot_array, differ_by_null
+
+DIMENSION_INDEX = {
+    'TIME': 0,
+    'LENGTH': 1,
+    'MASS': 2,
+    'CURRENT': 3,
+    'TEMPERATURE': 4,
+    'MOLE': 5,
+    'LUMINOSITY': 6,
+}
+
+DIMENSION = {dim: hot_array(len(DIMENSION_INDEX), DIMENSION_INDEX[dim]) for dim in DIMENSION_INDEX}
+
+UNIT_SYSTEM = {
+    'NULL': {
+        'DIMENSION': [],
+        'MULTIPLIER': [],
+    },
+    'BASIS': {
+        'DIMENSION': list(DIMENSION.values()),
+        'MULTIPLIER': np.ones(len(DIMENSION)),
+    },
+}
 
 
 class DimensionalNumberBase():
