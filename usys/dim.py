@@ -1,4 +1,5 @@
 import numpy as np
+
 from usys.utils import hot_array, differ_by_null
 
 DIMENSION_INDEX = {
@@ -12,6 +13,7 @@ DIMENSION_INDEX = {
 }
 
 DIMENSION = {dim: hot_array(len(DIMENSION_INDEX), DIMENSION_INDEX[dim]) for dim in DIMENSION_INDEX}
+DIMENSIONLESS = np.zeros(len(DIMENSION_INDEX))
 
 UNIT_SYSTEM = {
     'NULL': {
@@ -96,6 +98,9 @@ class DimensionalNumberBase():
     def __pow__(self, power):
         return DimensionalNumber(self.value ** power, self.dim * power)
 
+    def __neg__(self):
+        return DimensionalNumber(-self.value, self.dim)
+
     def __str__(self):
         dimension = [f'[{dim}]^{power}' for dim, power in zip(list(DIMENSION_INDEX.keys()), self.dim) if power != 0]
         if len(dimension) == 0:
@@ -111,15 +116,46 @@ class DimensionalNumber(DimensionalNumberBase):
     def __init__(self, value, dim):
         super().__init__(value, dim)
 
+    def __cmp__(self, other):
+        if not self.have_same_dimension(other):
+            raise ValueError("Incompatible dimension!")
+        if isinstance(other, DimensionalNumber):
+            return self.value - other.value
+        else:
+            return self.value - other
+
+    def __lt__(self, other):
+        return self.__cmp__(other) < 0
+
+    def __gt__(self, other):
+        return self.__cmp__(other) > 0
+
+    def __le__(self, other):
+        return self.__cmp__(other) <= 0
+
+    def __ge__(self, other):
+        return self.__cmp__(other) >= 0
+
+    def __eq__(self, other):
+        return self.__cmp__(other) == 0
+
+    def __ne__(self, other):
+        return self.__cmp__(other) != 0
+
     def have_same_dimension(self, other):
-        return differ_by_null(self.dim, other.dim, UNIT_SYSTEM['NULL']['DIMENSION'])
+        if isinstance(other, DimensionalNumber):
+            return differ_by_null(self.dim, other.dim, UNIT_SYSTEM['NULL']['DIMENSION'])
+        else:
+            return differ_by_null(self.dim, DIMENSIONLESS, UNIT_SYSTEM['NULL']['DIMENSION'])
 
     def in_unit(self, unit):
         if not self.have_same_dimension(unit):
             raise ValueError("Incompatible dimension!")
-        else:
+        if isinstance(unit, DimensionalNumber):
             dim_diff = np.atleast_2d(self.dim - unit.dim).T
             basis = np.array(UNIT_SYSTEM['BASIS']['DIMENSION']).T
             exps = np.linalg.solve(basis, dim_diff).ravel()
             multiplier = np.prod(np.power(UNIT_SYSTEM['BASIS']['MULTIPLIER'], exps))
             return self.value / (unit.value * multiplier)
+        else:
+            return self.value / unit

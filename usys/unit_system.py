@@ -1,7 +1,6 @@
 import numpy as np
 from copy import deepcopy
 
-from usys.utils import hot_array
 from usys.dim import UNIT_SYSTEM
 from usys.constant import *
 
@@ -30,3 +29,20 @@ def use_unit_system(use):
             mol.value,
             Cd.value,
         ])
+    elif use.lower() == 'planck':
+        UNIT_SYSTEM['NULL']['DIMENSION'] =[c.dim, hbar.dim, g.dim, kb.dim]
+        UNIT_SYSTEM['NULL']['MULTIPLIER'] = [c.value, hbar.value, g.value, kb.value]
+        UNIT_SYSTEM['BASIS']['DIMENSION'] = deepcopy(UNIT_SYSTEM['NULL']['DIMENSION'])
+        UNIT_SYSTEM['BASIS']['DIMENSION'].extend([
+            DIMENSION['CURRENT'],
+            DIMENSION['MOLE'],
+            DIMENSION['LUMINOSITY'],
+        ])
+        UNIT_SYSTEM['BASIS']['MULTIPLIER'] = deepcopy(UNIT_SYSTEM['NULL']['MULTIPLIER'])
+        UNIT_SYSTEM['BASIS']['MULTIPLIER'].extend([
+            A.value,
+            mol.value,
+            Cd.value,
+        ])
+    else:
+        raise ValueError(f'Invalid unit system: {use}!')
