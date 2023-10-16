@@ -1,10 +1,10 @@
-#### `usys`: unit system in python ####
+###### USYS: unit system in python ####
 
-`usys` is a package to conveniently convert units.
+`usys` is a package to conveniently manage unit system in python.
 
-To install `usys`, simply run `pip install -e .`
+To install, simply run `pip install -e .`
 
-To use `usys`, for example
+To use, for example
 ```
 import usys
 usys.use_unit_system("si") # use SI unit system

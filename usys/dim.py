@@ -40,6 +40,8 @@ class DimensionalNumberBase():
             if np.any(self.dim != other.dim):
                 raise ValueError("Incompatible dimension!")
             return DimensionalNumber(self.value + other.value, self.dim)
+        elif isinstance(other, np.ndarray):
+            return np.array([self.__add__(x) for x in other])
         else:
             return DimensionalNumber(self.value + other, self.dim)
 
@@ -48,18 +50,24 @@ class DimensionalNumberBase():
             if np.any(self.dim != other.dim):
                 raise ValueError("Incompatible dimension!")
             return DimensionalNumber(self.value - other.value, self.dim)
+        elif isinstance(other, np.ndarray):
+            return np.array([self.__sub__(x) for x in other])
         else:
             return DimensionalNumber(self.value - other, self.dim)
 
     def __mul__(self, other):
         if isinstance(other, DimensionalNumber):
             return DimensionalNumber(self.value * other.value, self.dim + other.dim)
+        elif isinstance(other, np.ndarray):
+            return np.array([self.__mul__(x) for x in other])
         else:
             return DimensionalNumber(self.value * other, self.dim)
 
     def __truediv__(self, other):
         if isinstance(other, DimensionalNumber):
             return DimensionalNumber(self.value / other.value, self.dim - other.dim)
+        elif isinstance(other, np.ndarray):
+            return np.array([self.__truediv__(x) for x in other])
         else:
             return DimensionalNumber(self.value / other, self.dim)
 
@@ -71,6 +79,8 @@ class DimensionalNumberBase():
             if np.any(self.dim != other.dim):
                 raise ValueError("Incompatible dimension!")
             return DimensionalNumber(other.value - self.value, self.dim)
+        elif isinstance(other, np.ndarray):
+            return np.array([self.__rsub__(x) for x in other])
         else:
             return DimensionalNumber(other - self.value, self.dim)
 
@@ -80,6 +90,8 @@ class DimensionalNumberBase():
     def __rtruediv__(self, other):
         if isinstance(other, DimensionalNumber):
             return DimensionalNumber(other.value / self.value, other.dim - self.dim)
+        elif isinstance(other, np.ndarray):
+            return np.array([self.__rtruediv__(x) for x in other])
         else:
             return DimensionalNumber(other / self.value, -self.dim)
 
